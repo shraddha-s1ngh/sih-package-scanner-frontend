@@ -51,9 +51,20 @@ class _HomePageState extends State<HomePage> {
 
   final ImagePicker picker = ImagePicker();
 
+  // ============================================================
+  // IMAGE PICKER
+  // ============================================================
+
   Future<void> pickImage(ImageSource source) async {
     final XFile? image = await picker.pickImage(
       source: source,
+
+      // Reduce large camera/gallery images
+      imageQuality: 60,
+
+      // Prevent very large images from being uploaded
+      maxWidth: 1600,
+      maxHeight: 1600,
     );
 
     if (image != null) {
@@ -62,6 +73,10 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
+
+  // ============================================================
+  // SCAN PACKAGE
+  // ============================================================
 
   Future<void> scanPackage() async {
     if (selectedImage == null) {
@@ -82,7 +97,9 @@ class _HomePageState extends State<HomePage> {
 
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://127.0.0.1:8000/scan'),
+        Uri.parse(
+          'https://sih-package-scanner-backend.onrender.com/scan',
+        ),
       );
 
       request.files.add(
@@ -132,6 +149,10 @@ class _HomePageState extends State<HomePage> {
       }
     }
   }
+
+  // ============================================================
+  // IMAGE PREVIEW
+  // ============================================================
 
   Widget imagePreview() {
     if (selectedImage == null) {
@@ -283,7 +304,6 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-
 // ============================================================
 // RESULT PAGE
 // ============================================================
@@ -329,12 +349,10 @@ class ResultPage extends StatelessWidget {
         compliance['status']?.toString() ?? 'REVIEW';
 
     final rules =
-    compliance['rules_checked']
-    as Map<String, dynamic>;
+    compliance['rules_checked'] as Map<String, dynamic>;
 
     final summary =
-    compliance['summary']
-    as Map<String, dynamic>;
+    compliance['summary'] as Map<String, dynamic>;
 
     final passed = summary['passed'] ?? 0;
     final failed = summary['failed'] ?? 0;
@@ -366,17 +384,14 @@ class ResultPage extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
-
         child: Column(
           children: [
             // OVERALL RESULT
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
-
               decoration: BoxDecoration(
                 color: overallColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
@@ -385,7 +400,6 @@ class ResultPage extends StatelessWidget {
                   width: 2,
                 ),
               ),
-
               child: Column(
                 children: [
                   Icon(
@@ -397,9 +411,7 @@ class ResultPage extends StatelessWidget {
                     size: 70,
                     color: overallColor,
                   ),
-
                   const SizedBox(height: 12),
-
                   Text(
                     overallStatus,
                     style: TextStyle(
@@ -408,9 +420,7 @@ class ResultPage extends StatelessWidget {
                       color: overallColor,
                     ),
                   ),
-
                   const SizedBox(height: 8),
-
                   const Text(
                     'Package Compliance Result',
                     style: TextStyle(
@@ -434,9 +444,7 @@ class ResultPage extends StatelessWidget {
                     Colors.green,
                   ),
                 ),
-
                 const SizedBox(width: 10),
-
                 Expanded(
                   child: summaryCard(
                     'Failed',
@@ -444,9 +452,7 @@ class ResultPage extends StatelessWidget {
                     Colors.red,
                   ),
                 ),
-
                 const SizedBox(width: 10),
-
                 Expanded(
                   child: summaryCard(
                     'Review',
@@ -487,31 +493,25 @@ class ResultPage extends StatelessWidget {
                         'Unknown Rule';
 
                 final reason =
-                    ruleData['reason']?.toString() ??
-                        '';
+                    ruleData['reason']?.toString() ?? '';
 
                 return Container(
                   width: double.infinity,
                   margin: const EdgeInsets.only(
                     bottom: 10,
                   ),
-
                   padding: const EdgeInsets.all(14),
-
                   decoration: BoxDecoration(
                     borderRadius:
                     BorderRadius.circular(14),
-
                     border: Border.all(
                       color: getStatusColor(status)
                           .withValues(alpha: 0.5),
                     ),
                   ),
-
                   child: Row(
                     crossAxisAlignment:
                     CrossAxisAlignment.start,
-
                     children: [
                       Icon(
                         getStatusIcon(status),
@@ -519,14 +519,11 @@ class ResultPage extends StatelessWidget {
                         getStatusColor(status),
                         size: 28,
                       ),
-
                       const SizedBox(width: 12),
-
                       Expanded(
                         child: Column(
                           crossAxisAlignment:
                           CrossAxisAlignment.start,
-
                           children: [
                             Text(
                               name,
@@ -536,9 +533,7 @@ class ResultPage extends StatelessWidget {
                                 fontSize: 15,
                               ),
                             ),
-
                             const SizedBox(height: 4),
-
                             Text(
                               reason,
                               style: const TextStyle(
@@ -546,9 +541,7 @@ class ResultPage extends StatelessWidget {
                                 fontSize: 13,
                               ),
                             ),
-
                             const SizedBox(height: 5),
-
                             Text(
                               status,
                               style: TextStyle(
@@ -575,16 +568,13 @@ class ResultPage extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               height: 52,
-
               child: ElevatedButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-
                 icon: const Icon(
                   Icons.arrow_back,
                 ),
-
                 label: const Text(
                   'Scan Another Package',
                 ),
@@ -606,17 +596,13 @@ class ResultPage extends StatelessWidget {
         vertical: 16,
         horizontal: 8,
       ),
-
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-
         color: color.withValues(alpha: 0.1),
-
         border: Border.all(
           color: color.withValues(alpha: 0.5),
         ),
       ),
-
       child: Column(
         children: [
           Text(
@@ -627,9 +613,7 @@ class ResultPage extends StatelessWidget {
               color: color,
             ),
           ),
-
           const SizedBox(height: 4),
-
           Text(
             title,
             style: const TextStyle(
